@@ -7,7 +7,7 @@
 ; Installer Information
  
   Name "BotlyStudio-Agent"
-  OutFile "BotlyStudio-Agent-Win-x64.exe"
+  OutFile "BotlyStudio-Agent_Windows_x64_x86.exe"
   InstallDir $APPDATA\BotlyStudio-Agent
   
 ;======================================================
@@ -75,37 +75,34 @@ SectionEnd
 Section "Uninstall"
  
 	StrCpy $0 "BotlyStudio_Create_Bridge.exe"
-	DetailPrint "Searching for processes called '$0'"
-	KillProc::FindProcesses
-	DetailPrint "-> Found $0 processes"
-
-	Sleep 1500
-
-	StrCpy $0 "BotlyStudio_Create_Bridge_cli.exe"
-	DetailPrint "Killing all processes called '$0'"
-	KillProc::FindProcesses
-	DetailPrint "-> Found $0 processes"
-	
-	Goto completed
-
-	wooops:
-	DetailPrint "-> Error: Something went wrong :-("
-	Abort
-
-	completed:
-	DetailPrint "Everything went okay :-D"
-
+    DetailPrint "Searching for processes called '$0'"
+    KillProc::FindProcesses
+    DetailPrint "-> Found $0 processes"
+ 
+    Sleep 1500
+  
+	StrCpy $0 "BotlyStudio_Create_Bridge.exe"
+    DetailPrint "Killing all processes called '$0'"
+    KillProc::KillProcesses
+    DetailPrint "-> Killed $0 processes, failed to kill $1 processes"
+  
+ 
 ;Delete Files 
   RMDir /r "$INSTDIR\*.*"    
+  RMDir /r "$PROFILE\.arduino-create\*.*"
  
 ;Remove the installation directory
   RMDir "$INSTDIR"
+  RMDir "$PROFILE\.arduino-create"
  
 ;Delete Start Menu Shortcuts
   Delete "$SMSTARTUP\BotlyStudio-Agent.lnk"
   Delete "$SMPROGRAMS\BotlyStudio-Agent\*.*"
   RMDir  "$SMPROGRAMS\BotlyStudio-Agent"
  
+ ;Delete Uninstaller And Unistall Registry Entries
+  DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\BotlyStudio-Agent"
+  DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\BotlyStudio-Agent"  
  
 SectionEnd
  
